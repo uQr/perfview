@@ -66,8 +66,8 @@
             // Indicate I want the Time histograms to be computed.  
             double startTimeRelativeMsec = 0;
             double.TryParse(filterParams.StartTimeRelativeMSec, out startTimeRelativeMsec);
+            //System.Diagnostics.Debug.WriteLine("\n\nTIME: 1" + filterParams.StartTimeRelativeMSec + "\n2 " + startTimeRelativeMsec + "\n3 " + this.stacksource.SampleTimeRelativeMSecLimit + "\n\n");
             callTree.TimeHistogramController = new TimeHistogramController(callTree, startTimeRelativeMsec, this.stacksource.SampleTimeRelativeMSecLimit);
-
             float minIncusiveTimePercent;
             if (float.TryParse(filterParams.MinInclusiveTimePercent, out minIncusiveTimePercent) && minIncusiveTimePercent > 0)
             {
