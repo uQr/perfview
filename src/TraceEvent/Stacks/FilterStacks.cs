@@ -285,6 +285,16 @@ namespace Diagnostics.Tracing.StackSources
         }
 
         /// <summary>
+        /// Gets a number represneting the smallest timestamp of a sample.  
+        /// </summary>
+        public double MinTimeRelativeMSec { get { return m_minTimeRelativeMSec; } } 
+
+        /// <summary>
+        /// Gets a number representing the largest timestamp of a sample   
+        /// </summary>
+        public double MaxTimeRelativeMSec { get { return Math.Min(m_maxTimeRelativeMSec, m_baseStackSource.SampleTimeRelativeMSecLimit); } } 
+
+        /// <summary>
         /// Override
         /// </summary>
         public override void ForEach(Action<StackSourceSample> callback)
@@ -422,7 +432,7 @@ namespace Diagnostics.Tracing.StackSources
             get
             {
                 // TODO is this good enough? 
-                return Math.Min(m_maxTimeRelativeMSec, m_baseStackSource.SampleTimeRelativeMSecLimit);
+                return MaxTimeRelativeMSec;
             }
         }
         /// <summary>

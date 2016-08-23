@@ -266,13 +266,14 @@ namespace Microsoft.Diagnostics.Tracing
                 };
             }
 
-            // TODO FIX NOW Experimental : Include all 
-            eventSource.Dynamic.All += delegate (TraceEvent data)
+            // TODO FIX NOW Experimental : Include all EventSources
+            Action<TraceEvent> AddUserEventToView = delegate (TraceEvent data)
             {
-                // TODO decide what the correct heuristic is.  
-                // Currently I only do this for things that might be an EventSoruce (uses the name->Guid hashing)
-                // Most importantly, it excludes the high volume CLR providers.   
-                if (!TraceEventProviders.MaybeAnEventSource(data.ProviderGuid))
+            // TODO decide what the correct heuristic is.  
+            // Currently I only do this for things that might be an EventSource (uses the name->Guid hashing)
+            // Most importantly, it excludes the high volume CLR providers.   
+            if (!TraceEventProviders.MaybeAnEventSource(data.ProviderGuid) && 
+                !(data.ProviderGuid == ClrTraceEventParser.ProviderGuid && data.TaskName == "Exception"))
                     return;
 
                 //  We don't want most of the FrameworkEventSource events either.  
@@ -310,6 +311,9 @@ namespace Microsoft.Diagnostics.Tracing
 
                 m_threadState[(int)thread.ThreadIndex].LogCPUStack(data.TimeStampRelativeMSec, stackIndex, thread, this, false);
             };
+
+            eventSource.Dynamic.All += AddUserEventToView;
+            eventSource.Clr.ExceptionStart += AddUserEventToView;
 
             // Add my own callbacks.  
             eventSource.Kernel.ThreadCSwitch += OnThreadCSwitch;
